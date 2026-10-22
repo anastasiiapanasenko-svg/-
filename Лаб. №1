@@ -1,0 +1,37 @@
+int num = 0;  // Лічильник
+int last_state = LOW;
+int led = 0;
+
+// Піни 
+const int led_light[3] = {2, 3, 4};
+const int in = 5;
+
+void setup() {
+  for (int i = 0; i < 3; i++) {
+    pinMode(led_light[i], OUTPUT);
+    digitalWrite(led_light[i], LOW);
+  }
+  digitalWrite(led_light[led], HIGH); // Вмикаємо перший світлодіод
+  pinMode(in, INPUT);
+}
+
+void loop() {
+  int state = digitalRead(in);
+
+  // Фіксація нового  стану 
+  if (state == HIGH && last_state == LOW) {
+    num++; 
+
+    // Перемикаємо 10 високий стан
+    if (num >= 10) {
+      digitalWrite(led_light[led], LOW);  // Гасимо поточний
+      led = (led + 1) % 3;                // Визначаємо наступний
+      digitalWrite(led_light[led], HIGH); // Підсвічуємо наступний
+      num = 0;                            // Скидаємо лічильник
+    }
+
+    delay(200); // Захист від брязкіту
+  }
+
+  last_state = state;
+}
